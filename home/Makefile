@@ -31,14 +31,14 @@ airports: $(STA_FILES)
       
 gateway:
 	rm -f airports/meta.json
-	$(XPGET) -o airports
+	$(XPGET) -o $(TGROOT)/airports
 	
 terrain:
 	@mkdir -p $(TERRAIN_DIR)
 	echo $(TGCONSTRUCT) $(TGCONSTRUCT_FLAGS)
 	
-airports/state/%.sta: airports/dat/%.dat
-	mkdir -p airports/state
+$(TGROOT)/airports/state/%.sta: $(TGROOT)/airports/dat/%.dat
+	mkdir -p $(TGROOT)/airports/state
 	$(GENAPTS) $(GENAPTS_FLAGS) --input=$< 
 	@touch $@
 
