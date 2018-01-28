@@ -45,20 +45,20 @@ airports/state/%.sta: airports/dat/%.dat
 mirror-srtm3:
 	cd $(TGROOT)/mirrors && \
 	wget --wait=0 --random-wait --mirror --no-parent https://dds.cr.usgs.gov/srtm/version2_1/SRTM3
-	rm -f $(TGROOT)/data/SRTM-3 && ln -s $(TGROOT)/mirrors/mirrors/dds.cr.usgs.gov/srtm/version2_1/SRTM3 $(TGROOT)/data/SRTM-3
+	rm -f $(TGROOT)/data/SRTM-3 && ln -s $(TGROOT)/mirrors/dds.cr.usgs.gov/srtm/version2_1/SRTM3 $(TGROOT)/data/SRTM-3
 
 mirror-srtm1:
 	cd $(TGROOT)/mirrors && \
 	wget --wait=1 --random-wait --mirror --no-parent https://dds.cr.usgs.gov/srtm/version2_1/SRTM1/
-	rm -f $(TGROOT)/data/SRTM-1 && ln -s $(TGROOT)/mirrors/mirrors/dds.cr.usgs.gov/srtm/version2_1/SRTM1 $(TGROOT)/data/SRTM-1
+	rm -f $(TGROOT)/data/SRTM-1 && ln -s $(TGROOT)/mirrors/dds.cr.usgs.gov/srtm/version2_1/SRTM1 $(TGROOT)/data/SRTM-1
 
 hgtchop-srtm3:
 	cd $(TGROOT) && \
-	for f in tg/data/SRTM-3/*/*.zip; do hgtchop 3 $f tg/work/SRTM-3; done
+	for f in data/SRTM-3/*/*.zip; do hgtchop 3 "$$f" work/SRTM-3; done
 
 hgtchop-srtm1:
 	cd $(TGROOT) && \
-	for f in tg/data/SRTM-1/*/*.zip; do hgtchop 1 $f tg/work/SRTM-1; done
+	for f in data/SRTM-1/*/*.zip; do hgtchop 1 "$$f" work/SRTM-1; done
 
 terrafit-srtm3:
 	terrafit $(TGROOT)/work/SRTM-3
