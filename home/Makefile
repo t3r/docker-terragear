@@ -1,15 +1,15 @@
 XPGET=xpget.py
 TGROOT=/home/flightgear/tg
 
-DAT_FILES := $(wildcard airports/dat/*.dat)
-STA_FILES := $(addprefix airports/state/,$(notdir $(DAT_FILES:.dat=.sta)))
+DAT_FILES := $(wildcard $(TGROOT)/airports/dat/*.dat)
+STA_FILES := $(addprefix $(TGROOT)/airports/state/,$(notdir $(DAT_FILES:.dat=.sta)))
 
-TERRAIN_DIR=/blob/terrascenery/work/ws2.x/Terrain
+TERRAIN_DIR=$(TGROOT)/output/
 
-GENAPTS=/home/jenkins/workspace/TerraGear/dist/bin/genapts850
-GENAPTS_FLAGS=--work=/mnt/tg/work --threads=1 --nudge=20
+GENAPTS=genapts850
+GENAPTS_FLAGS=--work=$(TGROOT)/work --threads=1 --nudge=20
 
-TGCONSTRUCT=/home/jenkins/workspace/TerraGear/dist/bin/tg-construct
+TGCONSTRUCT=tg-construct
     
 TGCONSTRUCT_AREAS=AirportArea \
     AirportObj \
@@ -30,7 +30,7 @@ airports: $(STA_FILES)
 	@echo "Airports done" 
       
 gateway:
-	rm -f airports/meta.json
+	rm -f $(TGROOT)/airports/meta.json
 	$(XPGET) -o $(TGROOT)/airports
 	
 terrain:
