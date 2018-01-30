@@ -7,17 +7,24 @@ LABEL maintainer="Torsten Dreyer <torsten@t3r.de>"
 LABEL version="1.0"
 LABEL description="FlightGear Scenery Toolbox"
 
-RUN zypper in -y \
-  boost-devel \
-  cgal-devel \
-  cmake \
-  gcc-c++ \
-  cgal-devel \
-  gdal-devel \
-  git \
-  libcurl-devel \
-  libtiff-devel \
-  zlib-devel
+
+RUN true && \
+  zypper --no-gpg-check in -y \
+    boost-devel \
+    cgal-devel \
+    cmake \
+    gcc-c++ \
+    cgal-devel \
+    gdal-devel \
+    git \
+    libcurl-devel \
+    libtiff-devel \
+    zlib-devel
+
+#RUN true && \
+#  zypper ar -f http://download.opensuse.org/repositories/Application:/Geo/openSUSE_Leap_42.3/ Geo && \
+#  zypper --no-gpg-check in -y \
+#    libproj12
 
 RUN useradd --create-home --home-dir=/home/flightgear --shell=/bin/false flightgear
 USER flightgear
@@ -71,10 +78,12 @@ RUN groupadd --gid 1000 flightgear && useradd --uid 1000 --gid flightgear --crea
 WORKDIR /home/flightgear
 COPY --from=build /home/flightgear/dist/bin/* /usr/local/bin/
 COPY --from=build /home/flightgear/dist/lib64/* /usr/local/lib64/
+COPY --from=build /usr/lib64/libproj.so* /usr/lib64/
 
 COPY tools/* /usr/local/bin/
 COPY home/* /home/flightgear/
 RUN chown -R flightgear.flightgear /home/flightgear
+RUN ln -s /usr/lib64/libproj.so.9 /usr/lib64/libproj.so.12
 USER flightgear
 
 ENTRYPOINT [ "make" ]

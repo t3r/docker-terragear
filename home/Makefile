@@ -17,12 +17,12 @@ TGCONSTRUCT_AREAS=AirportArea \
     
 TGCONSTRUCT_FLAGS=\ 
     --output-dir=$(TERRAIN_DIR) \
-    --work-dir=/mnt/tg/work \
-    --share-dir=./share \
+    --work-dir=$(TGROOT)/work \
+    --share-dir=$(TGROOT)/share \
     --usgs-map=./usgsmap.txt \ 
     --priorities=./default_priorities.txt \
     --nudge=20 --ignore-landmass \
-    --debug-dir=./debug \
+    --debug-dir=$(TGROOT)/debug \
     --threads=2 \
     $(TGCONSTRUCT_AREAS)
     
