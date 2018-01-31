@@ -49,7 +49,7 @@ cat "${INPUT}" | while read line; do
 
   mkdir -p "${WORKDIR}"
   # skip 
-  if [ -a "${WORKDIR}/${LAYERNAME}" -a "${WORKDIR}/${LAYERNAME}" -nt "${INPUT}" ]; then
+  if [ -a "${WORKDIR}/${LAYERNAME}" ]; then
     if [ -z "$FORCE" ]; then
       echo "Skipping existing ${LAYERNAME}"
       continue
