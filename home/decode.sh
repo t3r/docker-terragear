@@ -31,9 +31,18 @@ if [ "${INPUT}" != "-" -a ! -r "${INPUT}" ]; then
   exit 1
 fi
 
-DECODEARGS="--max-segment 400 --spat 9 53 10 54 --threads 2"
+DECODEARGS=('--max-segment 400','--spat 9 53 10 54','--threads 2')
+home/dumpme.sh ${DECODEARGS[@]}
 DATASOURCE="PG:dbname=${PGDATABASE} host=${PGHOST} user=${PGUSER} port=${PGPORT}"
 DECODE="ogr-decode ${DECODEARGS}"
+
+ogrdecode ()
+{
+  if [ ! -z "$DEBUG" ]; then
+    echo ogr-decode --max-segment 400 --spat 9 53 10 54 --threads 2 --area-type "$AREATYPE" ${EXTRAS[@]} "${WORKDIR}" "${DATASOURCE}" "${LAYERNAME}"
+  fi
+  ogr-decode --max-segment 400 --spat 9 53 10 54 --threads 2 --area-type "$AREATYPE" "${EXTRAS[@]}" "${WORKDIR}" "${DATASOURCE}" "${LAYERNAME}"
+}
 
 WORK="${BASE}/tg/work"
 
@@ -42,12 +51,13 @@ cat "${INPUT}" | while read line; do
     continue
   fi
   IFS=';' read -r -a array <<< "$line"
+  AREATYPE="${array[0]}"
   WORKDIR="${WORK}/${array[1]}" 
   LAYERNAME="${array[2]}" 
-  EXTRAS=${array[3]} 
-  AREATYPE="${array[0]}" 
+  EXTRAS=("${array[@]:3}")
 
   mkdir -p "${WORKDIR}"
+
   # skip 
   if [ -a "${WORKDIR}/${LAYERNAME}" ]; then
     if [ -z "$FORCE" ]; then
@@ -56,10 +66,7 @@ cat "${INPUT}" | while read line; do
     fi
   fi
 
-  echo "Processing ${LAYERNAME}"
-  if [ ! -z "$DEBUG" ]; then
-    echo ${DECODE} --area-type "${AREATYPE}" ${EXTRAS} "${WORKDIR}" "${DATASOURCE}" "${LAYERNAME}"
-  fi
-  ${DECODE} --area-type "${AREATYPE}" ${EXTRAS} "${WORKDIR}" "${DATASOURCE}" "${LAYERNAME}" || exit $?
+  echo "Processing ${WORKDIR}/${LAYERNAME}"
+  ogrdecode || exit $?
   date > "${WORKDIR}/${LAYERNAME}" 
 done

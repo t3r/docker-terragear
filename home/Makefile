@@ -19,8 +19,8 @@ TGCONSTRUCT_FLAGS=\
     --output-dir=$(TERRAIN_DIR) \
     --work-dir=$(TGROOT)/work \
     --share-dir=$(TGROOT)/share \
-    --usgs-map=./usgsmap.txt \ 
-    --priorities=./default_priorities.txt \
+    --usgs-map=$(TGROOT)/config/usgsmap.txt \
+    --priorities=$(TGROOT)/config/default_priorities.txt \
     --nudge=20 --ignore-landmass \
     --debug-dir=$(TGROOT)/debug \
     --threads=2 \
@@ -65,3 +65,10 @@ terrafit-srtm3:
 
 terrafit-srtm1:
 	terrafit $(TGROOT)/work/SRTM-1
+
+ogr-decode:
+	./decode.sh -di $(TGROOT)/config/decode.dat
+
+init: $(TGROOT)/data
+	echo "Initializing Workspace"
+	for f in data output work mirrors; do mkdir -p ${TGROOT}/$f; done

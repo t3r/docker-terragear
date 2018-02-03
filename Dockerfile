@@ -82,6 +82,7 @@ COPY --from=build /usr/lib64/libproj.so* /usr/lib64/
 
 COPY tools/* /usr/local/bin/
 COPY home/* /home/flightgear/
+COPY config/* /home/flightgear/config/
 RUN chown -R flightgear.flightgear /home/flightgear
 RUN ln -s /usr/lib64/libproj.so.9 /usr/lib64/libproj.so.12
 USER flightgear
