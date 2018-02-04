@@ -1,45 +1,48 @@
-XPGET=xpget.py
 TGROOT=/home/flightgear/tg
+TERRAIN_DIR=$(TGROOT)/output/Terrain
+NUDGE=20
+THREADS=2
+#TGCONSTRUCT_AREAS=AirportArea \
+#    AirportObj \
+#    Default
+
+-include $(TGROOT)/config/config.mk
 
 DAT_FILES := $(wildcard $(TGROOT)/airports/dat/*.dat)
 STA_FILES := $(addprefix $(TGROOT)/airports/state/,$(notdir $(DAT_FILES:.dat=.sta)))
 
-TERRAIN_DIR=$(TGROOT)/output/
+GENAPTS_FLAGS=--work=$(TGROOT)/work --threads=$(THREADS) --nudge=$(NUDGE)
 
-GENAPTS=genapts850
-GENAPTS_FLAGS=--work=$(TGROOT)/work --threads=1 --nudge=20
-
-TGCONSTRUCT=tg-construct
-    
-TGCONSTRUCT_AREAS=AirportArea \
-    AirportObj \
-    Default
-    
-TGCONSTRUCT_FLAGS=\ 
+TGCONSTRUCT_FLAGS=\
     --output-dir=$(TERRAIN_DIR) \
     --work-dir=$(TGROOT)/work \
     --share-dir=$(TGROOT)/share \
     --usgs-map=$(TGROOT)/config/usgsmap.txt \
     --priorities=$(TGROOT)/config/default_priorities.txt \
-    --nudge=20 --ignore-landmass \
+    --nudge=$(NUDGE) --ignore-landmass \
     --debug-dir=$(TGROOT)/debug \
-    --threads=2 \
-    $(TGCONSTRUCT_AREAS)
-    
+    --threads=$(THREADS) \
+    --min-lat=53 \
+    --max-lat=54 \
+    --min-lon=9 \
+    --max-lon=11 \
+    $(shell ls $(TGROOT)/work/)
+
 airports: $(STA_FILES)
-	@echo "Airports done" 
-      
+	@echo "Airports done"
+
 gateway:
 	rm -f $(TGROOT)/airports/meta.json
-	$(XPGET) -o $(TGROOT)/airports
+	xpget.py -o $(TGROOT)/airports
 	
 terrain:
 	@mkdir -p $(TERRAIN_DIR)
-	echo $(TGCONSTRUCT) $(TGCONSTRUCT_FLAGS)
+	echo $(TGCONSTRUCT_FLAGS)
+	tg-construct $(TGCONSTRUCT_FLAGS)
 	
 $(TGROOT)/airports/state/%.sta: $(TGROOT)/airports/dat/%.dat
 	mkdir -p $(TGROOT)/airports/state
-	$(GENAPTS) $(GENAPTS_FLAGS) --input=$< 
+	genapts850 $(GENAPTS_FLAGS) --input=$<
 	@touch $@
 
 mirror-srtm3:
@@ -72,3 +75,6 @@ ogr-decode:
 init: $(TGROOT)/data
 	echo "Initializing Workspace"
 	for f in data output work mirrors; do mkdir -p ${TGROOT}/$f; done
+
+help:
+	cat README.md

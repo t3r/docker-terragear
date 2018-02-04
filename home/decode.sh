@@ -31,15 +31,12 @@ if [ "${INPUT}" != "-" -a ! -r "${INPUT}" ]; then
   exit 1
 fi
 
-DECODEARGS=('--max-segment 400','--spat 9 53 10 54','--threads 2')
-home/dumpme.sh ${DECODEARGS[@]}
 DATASOURCE="PG:dbname=${PGDATABASE} host=${PGHOST} user=${PGUSER} port=${PGPORT}"
-DECODE="ogr-decode ${DECODEARGS}"
 
 ogrdecode ()
 {
   if [ ! -z "$DEBUG" ]; then
-    echo ogr-decode --max-segment 400 --spat 9 53 10 54 --threads 2 --area-type "$AREATYPE" ${EXTRAS[@]} "${WORKDIR}" "${DATASOURCE}" "${LAYERNAME}"
+    echo ogr-decode --max-segment 400 --spat 9 53 11 54 --threads 2 --area-type "$AREATYPE" ${EXTRAS[@]} "${WORKDIR}" "${DATASOURCE}" "${LAYERNAME}"
   fi
   ogr-decode --max-segment 400 --spat 9 53 10 54 --threads 2 --area-type "$AREATYPE" "${EXTRAS[@]}" "${WORKDIR}" "${DATASOURCE}" "${LAYERNAME}"
 }
