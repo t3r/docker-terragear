@@ -66,6 +66,7 @@ RUN zypper in -y \
   libgdal20 \
   libmpfr4 \
   make \
+  unzip \
   wget \
   python
 
