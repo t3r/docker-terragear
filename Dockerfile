@@ -70,6 +70,8 @@ RUN zypper in -y \
   wget \
   python
 
+RUN ln -s /usr/lib64/libproj.so.9 /usr/lib64/libproj.so.12
+
 RUN groupadd --gid 1000 flightgear && useradd --uid 1000 --gid flightgear --create-home --home-dir=/home/flightgear --shell=/bin/bash flightgear
 
 WORKDIR /home/flightgear
@@ -77,12 +79,4 @@ COPY --from=build /home/flightgear/dist/bin/* /usr/local/bin/
 COPY --from=build /home/flightgear/dist/lib64/* /usr/local/lib64/
 COPY --from=build /usr/lib64/libproj.so* /usr/lib64/
 
-COPY tools/* /usr/local/bin/
-COPY home/* /home/flightgear/
-COPY config/* /home/flightgear/config/
-RUN chown -R flightgear.flightgear /home/flightgear
-RUN ln -s /usr/lib64/libproj.so.9 /usr/lib64/libproj.so.12
 USER flightgear
-
-ENTRYPOINT [ "make" ]
-CMD [ "help" ]
