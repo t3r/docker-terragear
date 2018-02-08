@@ -76,6 +76,7 @@ RUN groupadd --gid 1000 flightgear && useradd --uid 1000 --gid flightgear --crea
 
 WORKDIR /home/flightgear
 COPY --from=build /home/flightgear/dist/bin/* /usr/local/bin/
+COPY --from=build /home/flightgear/dist/share/TerraGear /usr/local/share/TerraGear
 COPY --from=build /home/flightgear/dist/lib64/* /usr/local/lib64/
 COPY --from=build /usr/lib64/libproj.so* /usr/lib64/
 
