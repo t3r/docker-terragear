@@ -30,7 +30,7 @@ RUN useradd --create-home --home-dir=/home/flightgear --shell=/bin/false flightg
 USER flightgear
 
 ARG SGBRANCH=next
-ARG TGBRANCH=scenery/ws2.0
+ARG TGBRANCH=master
 
 # Build SimGear
 WORKDIR /home/flightgear
