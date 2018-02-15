@@ -30,13 +30,15 @@ RUN useradd --create-home --home-dir=/home/flightgear --shell=/bin/false flightg
 USER flightgear
 
 ARG SGBRANCH=next
+ARG SGURL=https://git.code.sf.net/p/flightgear/simgear
 ARG TGBRANCH=master
+ARG TGURL=https://github.com/t3r/terragear.git
 
 # Build SimGear
 WORKDIR /home/flightgear
 RUN true \
     && mkdir -p build/simgear \
-    && git clone -b ${SGBRANCH} --single-branch https://git.code.sf.net/p/flightgear/simgear \
+    && git clone -b ${SGBRANCH} --single-branch ${SGURL} \
     && pushd build/simgear \
     && cmake -D CMAKE_BUILD_TYPE=Release -D "CMAKE_CXX_FLAGS=-pipe" -DSIMGEAR_HEADLESS=ON -DENABLE_TESTS=OFF -DENABLE_PKGUTIL=OFF -DENABLE_DNS=OFF -DENABLE_SIMD=OFF -DENABLE_RTI=OFF -DCMAKE_PREFIX_PATH=$HOME/dist -DCMAKE_INSTALL_PREFIX:PATH=$HOME/dist ../../simgear \
     && make -j4 install \
@@ -45,7 +47,10 @@ RUN true \
 # Build TerraGear
 # double cmake is by intention
 RUN true \
-    && git clone -b ${TGBRANCH} --single-branch https://git.code.sf.net/p/flightgear/terragear \
+    && git clone -b ${TGBRANCH} --single-branch ${TGURL} \
+    && pushd terragear \
+    && git status && git log HEAD^..HEAD \
+    && popd \
     && mkdir -p build/terragear \
     && pushd build/terragear \
     && cmake -D CMAKE_BUILD_TYPE=Release -D "CMAKE_CXX_FLAGS=-pipe -std=c++11" -DCMAKE_PREFIX_PATH=$HOME/dist -D CMAKE_INSTALL_PREFIX:PATH=$HOME/dist ../../terragear  \
