@@ -55,8 +55,9 @@ RUN true \
     && pushd build/terragear \
     && cmake -D CMAKE_BUILD_TYPE=Release -D "CMAKE_CXX_FLAGS=-pipe -std=c++11" -DCMAKE_PREFIX_PATH=$HOME/dist -D CMAKE_INSTALL_PREFIX:PATH=$HOME/dist ../../terragear  \
     && cmake -D CMAKE_BUILD_TYPE=Release -D "CMAKE_CXX_FLAGS=-pipe -std=c++11" -DCMAKE_PREFIX_PATH=$HOME/dist -D CMAKE_INSTALL_PREFIX:PATH=$HOME/dist ../../terragear  \
-    && make -j4 install \
+    && make -j4 install  \
     && popd
+USER root
 
 ###
 # Now, build the final terragear image
@@ -82,7 +83,13 @@ RUN groupadd --gid 1000 flightgear && useradd --uid 1000 --gid flightgear --crea
 WORKDIR /home/flightgear
 COPY --from=build /home/flightgear/dist/bin/* /usr/local/bin/
 COPY --from=build /home/flightgear/dist/share/TerraGear /usr/local/share/TerraGear
-COPY --from=build /home/flightgear/dist/lib64/* /usr/local/lib64/
+COPY --from=build /home/flightgear/dist/lib64/* /usr/lib64/
+COPY --from=build /home/flightgear/dist/lib/* /usr/lib64/
 COPY --from=build /usr/lib64/libproj.so* /usr/lib64/
+COPY --from=build /usr/lib64/libCGAL* /usr/lib64/
+COPY --from=build /usr/lib64/libboost_chrono.so.1.54.0 /usr/lib64/
+COPY --from=build /usr/lib64/libboost_date_time.so.1.54.0 /usr/lib64/
+COPY --from=build /usr/lib64/libboost_atomic.so.1.54.0 /usr/lib64/
+#COPY --from=build /home/flightgear/build/terragear/src/Prep/Terra/libTerra.so /usr/lib64/
 
 USER flightgear
