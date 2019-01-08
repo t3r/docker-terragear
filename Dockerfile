@@ -31,8 +31,8 @@ USER flightgear
 
 ARG SGBRANCH=next
 ARG SGURL=https://git.code.sf.net/p/flightgear/simgear
-ARG TGBRANCH=master
-ARG TGURL=https://github.com/t3r/terragear.git
+ARG TGBRANCH=next
+ARG TGURL=https://git.code.sf.net/p/flightgear/terragear
 
 # Build SimGear
 WORKDIR /home/flightgear
