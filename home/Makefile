@@ -44,12 +44,16 @@ $(TGROOT)/airports/state/%.sta: $(TGROOT)/airports/dat/%.dat
 
 mirror-srtm3:
 	cd $(TGROOT)/mirrors && \
-	wget --wait=0 --random-wait --mirror --no-parent https://dds.cr.usgs.gov/srtm/version2_1/SRTM3
+        for R in Africa Australia Eurasia Islands North_America South_America; do \
+          wget --accept=hgt.zip --wait=0 --random-wait --mirror --no-parent https://dds.cr.usgs.gov/srtm/version2_1/SRTM3/$$R;\
+        done
 	rm -f $(TGROOT)/data/SRTM-3 && ln -s $(TGROOT)/mirrors/dds.cr.usgs.gov/srtm/version2_1/SRTM3 $(TGROOT)/data/SRTM-3
 
 mirror-srtm1:
 	cd $(TGROOT)/mirrors && \
-	wget --wait=1 --random-wait --mirror --no-parent https://dds.cr.usgs.gov/srtm/version2_1/SRTM1/
+        for R in  6 7; do \
+          wget --accept=hgt.zip --wait=0 --random-wait --mirror --no-parent https://dds.cr.usgs.gov/srtm/version2_1/SRTM1/Region_0$$R; \
+        done
 	rm -f $(TGROOT)/data/SRTM-1 && ln -s $(TGROOT)/mirrors/dds.cr.usgs.gov/srtm/version2_1/SRTM1 $(TGROOT)/data/SRTM-1
 
 hgtchop-srtm3:
@@ -69,9 +73,9 @@ terrafit-srtm1:
 ogr-decode:
 	./decode.sh -di $(TGROOT)/config/decode.dat
 
-init: $(TGROOT)/data
+init:
 	echo "Initializing Workspace"
-	for f in data output work mirrors; do mkdir -p ${TGROOT}/$f; done
+	for f in data output work mirrors; do mkdir -p ${TGROOT}/$$f; done
 
 help:
 	cat README.md
