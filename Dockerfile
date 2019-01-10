@@ -21,11 +21,6 @@ RUN true && \
     libtiff-devel \
     zlib-devel
 
-#RUN true && \
-#  zypper ar -f http://download.opensuse.org/repositories/Application:/Geo/openSUSE_Leap_42.3/ Geo && \
-#  zypper --no-gpg-check in -y \
-#    libproj12
-
 RUN useradd --create-home --home-dir=/home/flightgear --shell=/bin/false flightgear
 USER flightgear
 
@@ -39,11 +34,15 @@ WORKDIR /home/flightgear
 RUN true \
     && mkdir -p build/simgear \
     && git clone -b ${SGBRANCH} --single-branch ${SGURL} \
+    && pushd simgear \
+    && git status && git log HEAD^..HEAD \
+    && popd \
     && pushd build/simgear \
     && cmake -D CMAKE_BUILD_TYPE=Release -D "CMAKE_CXX_FLAGS=-pipe" -DSIMGEAR_HEADLESS=ON -DENABLE_TESTS=OFF -DENABLE_PKGUTIL=OFF -DENABLE_DNS=OFF -DENABLE_SIMD=OFF -DENABLE_RTI=OFF -DCMAKE_PREFIX_PATH=$HOME/dist -DCMAKE_INSTALL_PREFIX:PATH=$HOME/dist ../../simgear \
     && make -j4 install \
     && popd
 
+#
 # Build TerraGear
 # double cmake is by intention
 RUN true \
@@ -67,9 +66,12 @@ LABEL maintainer="Torsten Dreyer <torsten@t3r.de>"
 LABEL version="1.0"
 LABEL description="FlightGear Scenery Toolbox"
 
-RUN zypper in -y \
+RUN true && \
+  zypper ar -G http://download.opensuse.org/repositories/Application:/Geo/openSUSE_Leap_42.3/ Geo && \
+  zypper in -y \
   libboost_thread1_54_0 \
   libgdal20 \
+  gdal \
   libmpfr4 \
   make \
   unzip \
